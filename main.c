@@ -28,16 +28,20 @@ int getCurrentTokenSize(char *inputString) {
 /*
  * Add individual words to array tokens
  */
-int tokenize(const char *paragraph, char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH]){
+int tokenize(char *paragraph, char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH]){
     int firstDCounter = 0;
     int secondDCounter = 0;
     int paragraphCounter = 0;
-    int characterCounter = 0;
-    while (paragraph[paragraphCounter]<=strlen(paragraph)) {
+    while (paragraphCounter<=strlen(paragraph)) {
         if (paragraph[paragraphCounter] != ' ') {
             tokens[firstDCounter][secondDCounter] = paragraph[paragraphCounter];
             secondDCounter++;
         }
+//        else {
+//            firstDCounter++;
+//            secondDCounter = 0;
+//            paragraphCounter++;
+//        }
         if (paragraph[paragraphCounter-1] == ' ' && paragraph[paragraphCounter] != ' ') {
             firstDCounter++;
             secondDCounter = 0;
@@ -50,17 +54,19 @@ int tokenize(const char *paragraph, char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LE
 /*
  * Determine words to be printed on next line
  */
-int getNumberOfWordsForNextLine(char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH], int totalNumberOfWords,
-                                int lineLength) {
-    int whiteSpaceCount = -1;
+int getNumberOfWordsForNextLine(char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH], int lineLength) {
+//    int totalNumberOfWords, int numberOfWordsProcessedSoFar,
+    int whiteSpaceCount = 0;
     unsigned long characterCount = 0;
     int arrayCounter = 0;
 
-    while (whiteSpaceCount+characterCount<=lineLength) {
+    while (characterCount<lineLength) {
+        arrayCounter+=1;
+        characterCount += strlen(tokens[arrayCounter]) + arrayCounter;
         whiteSpaceCount++;
-        characterCount += strlen(tokens[arrayCounter]);
-        arrayCounter++;
     }
+
+    return arrayCounter;
 }
 
 /*
@@ -71,22 +77,28 @@ void printWordAndSpaces(char word[MAX_WORD_LENGTH], int numberOfSpaces);
 /*
  *
  */
-void formatAndPrintCurrentLine(char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH], int numberOfWordsProcessedSoFar,
-                               int numberOfWordsOnNextLine, int lineLength) {
-
+void formatAndPrintCurrentLine(char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH], int totalNumberOfWords, int numberOfWordsOnNextLine,
+                               int lineLength) {
+    for (int index = 0; index<=numberOfWordsOnNextLine; index++) {
+        printf("%s", tokens[index]);
+    }
 }
 
-void formatAndPrintWords(char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH], int totalNumberOfWords, int lineLength) {
-
-}
+//void formatAndPrintWords(char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH], int totalNumberOfWords, int lineLength) {
+//
+//}
 
 void formatAndPrintParagraph(char *paragraph, int lineLength){
     char tokens[MAX_NUMBER_OF_WORDS][MAX_WORD_LENGTH];
     int totalNumberOfWords = tokenize(paragraph, tokens);
-    getNumberOfWordsForNextLine(tokens, totalNumberOfWords, lineLength);
+    int nextLineWords = getNumberOfWordsForNextLine(tokens, lineLength);
+    printf("%d", nextLineWords);
+    formatAndPrintCurrentLine(tokens, totalNumberOfWords, nextLineWords, lineLength);
 }
 
 int main() {
-    char paragraph[] = "hello world i went for a walk today it was raining";
+    char paragraph[] = "hello world i went  for a  walk today it was raining";
+
+
     formatAndPrintParagraph(paragraph, 25);
 }
